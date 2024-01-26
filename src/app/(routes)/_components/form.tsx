@@ -20,6 +20,7 @@ const inter = Playfair_Display({ subsets: ["latin"] });
 function Form() {
   return (
     <div className="w-1/2 flex flex-col gap-5 ">
+      <div className="w-full h-fit p-3 border border-yellow-300/50 bg-yellow-200/50"></div>
       <Card>
         <CardHeader>
           <CardTitle className={`${cn(inter.className)} font-semibold text-xl`}>

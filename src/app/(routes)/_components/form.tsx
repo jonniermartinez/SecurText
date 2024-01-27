@@ -25,6 +25,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useState } from "react";
 
 const inter = Playfair_Display({ subsets: ["latin"] });
 
@@ -33,26 +34,35 @@ interface FormProps {
 }
 
 function Form({ encrypt }: FormProps) {
+  const [resultText, setResultText] = useState(String);
+  const [password, setPassWord] = useState(String);
+  const [text, setText] = useState(String);
+
   const title = encrypt ? "Encrypt Text" : "Decrypt Text";
   const textPlaceHolder = encrypt
     ? "Paste/type your plain string"
     : "Paste/type your encrypted string";
 
   const handleEncrypt = () => {
-    const result = cryptoJS.AES.encrypt(
-      "Jonnier is a programer",
-      "password"
-    ).toString();
-    console.log(result);
+    const result = cryptoJS.AES.encrypt(text, password).toString();
+    setResultText(result);
   };
 
   const handleDecrypt = () => {
-    const result = cryptoJS.AES.decrypt(
-      "U2FsdGVkX1+trge5UTYdm6f0t2wIo9sWw71HB9s6/JLZox636fd0krGYUYq4gPrw",
-      "password"
-    );
+    const result = cryptoJS.AES.decrypt(text, password);
     const decryptValue = result.toString(cryptoJS.enc.Utf8);
     console.log(decryptValue);
+    if (decryptValue == "") {
+      setResultText("Password or text to decrypt is not correct");
+      return;
+    }
+    setResultText(decryptValue);
+  };
+  const handleOpenChage = (e: boolean) => {
+    if (e === false) {
+      setPassWord("");
+      setText("");
+    }
   };
 
   return (
@@ -66,32 +76,52 @@ function Form({ encrypt }: FormProps) {
         <CardContent className="flex flex-col gap-4">
           <div>
             <Label>Text</Label>
-            <Input placeholder={textPlaceHolder}></Input>
+            <Input
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder={textPlaceHolder}
+            ></Input>
           </div>
           <div>
             <Label>Password</Label>
-            <Input placeholder="Password"></Input>
+            <Input
+              value={password}
+              onChange={(e) => setPassWord(e.target.value)}
+              placeholder="Password"
+            ></Input>
           </div>
         </CardContent>
         <CardFooter>
-          <Dialog>
-            {" "}
-            <Button
-              onClick={() => {
-                encrypt ? handleEncrypt() : handleDecrypt();
-              }}
-            >
-              {encrypt ? "Encrypt" : "Decrypt"}
-            </Button>
-            <DialogTrigger></DialogTrigger>
+          <Dialog onOpenChange={(e: boolean) => handleOpenChage(e)}>
+            <DialogTrigger>
+              {" "}
+              <Button
+                onClick={() => {
+                  encrypt ? handleEncrypt() : handleDecrypt();
+                }}
+              >
+                {encrypt ? "Encrypt" : "Decrypt"}
+              </Button>
+            </DialogTrigger>
+
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Are you absolutely sure?</DialogTitle>
-                <DialogDescription>
-                  <CopyClipboard text={"copiame esta"}></CopyClipboard>
-                  This action cannot be undone. This will permanently delete
-                  your account and remove your data from our servers.
-                </DialogDescription>
+                {!text || !password ? (
+                  <>
+                    <DialogTitle>Error</DialogTitle>
+                    <DialogDescription>
+                      The text or password field is empty
+                    </DialogDescription>
+                  </>
+                ) : (
+                  <>
+                    <DialogTitle className="flex gap-3 items-center">
+                      <CopyClipboard text={resultText}></CopyClipboard>
+                      {encrypt ? "Encrypted Output:" : "Decrypted Text:"}
+                    </DialogTitle>
+                    <DialogDescription>{resultText}</DialogDescription>
+                  </>
+                )}
               </DialogHeader>
             </DialogContent>
           </Dialog>

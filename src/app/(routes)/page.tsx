@@ -10,9 +10,12 @@ export default function Home() {
     title: "",
   };
   return (
-    <div className="p-9 px-20">
+    <div className="md:p-9 p-3 md:px-20 max-w-7xl mx-auto">
       <h1
-        className={cn(inter.className, "font-bold text-6xl text-center pb-6")}
+        className={cn(
+          inter.className,
+          "font-bold text-5xl md:text-6xl text-center pb-6"
+        )}
       >
         Encrypt and decrypt text
       </h1>
@@ -32,8 +35,8 @@ export default function Home() {
           Follow me on twitter
         </p>
       </Link>
-      <div className="flex w-full justify-between mt-9 px-36 gap-28">
-        <Form></Form>
+      <div className="flex w-full flex-wrap justify-between mt-9 lg:px-36 items-center gap-6 md:gap-28">
+        <Form encrypt={true}></Form>
         <Form></Form>
       </div>
     </div>
